@@ -1,0 +1,106 @@
+{
+  "prices_per_1m_usd": {
+    "gpt-4.1-mini": {
+      "input": 0.4,
+      "cached": 0.1,
+      "output": 1.6
+    },
+    "gpt-5.6-luna": {
+      "input": 0.2,
+      "cached": 0.02,
+      "output": 1.2
+    }
+  },
+  "rows": [
+    {
+      "config": "Starter code, gpt-4.1-mini (repo default)",
+      "model": "gpt-4.1-mini",
+      "eval_score_pct": 74.67,
+      "avg_input_tokens": 3039,
+      "avg_cached_input_tokens": 120,
+      "cache_hit_pct": 4.0,
+      "avg_output_tokens": 234,
+      "avg_reasoning_tokens": 0,
+      "avg_visible_output_tokens": 234,
+      "latency_p50_ms": 2077,
+      "latency_p95_ms": 3759,
+      "cost_50_cases_usd": 0.0777,
+      "cost_per_1k_cases_usd": 1.55
+    },
+    {
+      "config": "Starter code, gpt-5.6-luna",
+      "model": "gpt-5.6-luna",
+      "eval_score_pct": 97.33,
+      "avg_input_tokens": 3029,
+      "avg_cached_input_tokens": 0,
+      "cache_hit_pct": 0.0,
+      "avg_output_tokens": 297,
+      "avg_reasoning_tokens": 145,
+      "avg_visible_output_tokens": 151,
+      "latency_p50_ms": 3298,
+      "latency_p95_ms": 4131,
+      "cost_50_cases_usd": 0.0481,
+      "cost_per_1k_cases_usd": 0.96
+    },
+    {
+      "config": "Two-layer pipeline, gpt-4.1-mini (first call per case)",
+      "model": "gpt-4.1-mini",
+      "eval_score_pct": 96.0,
+      "avg_input_tokens": 3830,
+      "avg_cached_input_tokens": 1651,
+      "cache_hit_pct": 43.1,
+      "avg_output_tokens": 620,
+      "avg_reasoning_tokens": 0,
+      "avg_visible_output_tokens": 620,
+      "latency_p50_ms": 4398,
+      "latency_p95_ms": 6010,
+      "cost_50_cases_usd": 0.1015,
+      "cost_per_1k_cases_usd": 2.03
+    },
+    {
+      "config": "Two-layer pipeline, gpt-4.1-mini (repeat call)",
+      "model": "gpt-4.1-mini",
+      "eval_score_pct": 96.0,
+      "avg_input_tokens": 3830,
+      "avg_cached_input_tokens": 3090,
+      "cache_hit_pct": 80.7,
+      "avg_output_tokens": 612,
+      "avg_reasoning_tokens": 0,
+      "avg_visible_output_tokens": 612,
+      "latency_p50_ms": 4213,
+      "latency_p95_ms": 5435,
+      "cost_50_cases_usd": 0.0792,
+      "cost_per_1k_cases_usd": 1.58
+    },
+    {
+      "config": "Two-layer pipeline, gpt-5.6-luna (first call per case)",
+      "model": "gpt-5.6-luna",
+      "eval_score_pct": 100.0,
+      "avg_input_tokens": 3828,
+      "avg_cached_input_tokens": 2058,
+      "cache_hit_pct": 53.8,
+      "avg_output_tokens": 511,
+      "avg_reasoning_tokens": 0,
+      "avg_visible_output_tokens": 511,
+      "latency_p50_ms": 3769,
+      "latency_p95_ms": null,
+      "cost_50_cases_usd": 0.0504,
+      "cost_per_1k_cases_usd": 1.01
+    },
+    {
+      "config": "Two-layer pipeline, gpt-5.6-luna (repeat call)",
+      "model": "gpt-5.6-luna",
+      "eval_score_pct": 100.0,
+      "avg_input_tokens": 3828,
+      "avg_cached_input_tokens": 3825,
+      "cache_hit_pct": 99.9,
+      "avg_output_tokens": 522,
+      "avg_reasoning_tokens": 0,
+      "avg_visible_output_tokens": 522,
+      "latency_p50_ms": 3386,
+      "latency_p95_ms": 5376,
+      "cost_50_cases_usd": 0.0352,
+      "cost_per_1k_cases_usd": 0.7
+    }
+  ]
+}

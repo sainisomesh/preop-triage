@@ -1,0 +1,1008 @@
+{
+  "model": "gpt-4.1-mini",
+  "usage_per_run": {
+    "run1": {
+      "calls": 50,
+      "avg_input": 3830,
+      "avg_cached": 1651,
+      "cache_hit_pct": 43.1,
+      "avg_output": 620,
+      "avg_reasoning": 0,
+      "latency_p50_ms": 4398,
+      "latency_p95_ms": 6010,
+      "wall_s_8_workers": 27.9,
+      "cost_50_usd": 0.1015,
+      "cost_per_1k_usd": 2.03
+    },
+    "run2": {
+      "calls": 50,
+      "avg_input": 3830,
+      "avg_cached": 3090,
+      "cache_hit_pct": 80.7,
+      "avg_output": 612,
+      "avg_reasoning": 0,
+      "latency_p50_ms": 4213,
+      "latency_p95_ms": 5435,
+      "wall_s_8_workers": 26.8,
+      "cost_50_usd": 0.0792,
+      "cost_per_1k_usd": 1.58
+    },
+    "run3": {
+      "calls": 50,
+      "avg_input": 3830,
+      "avg_cached": 3013,
+      "cache_hit_pct": 78.7,
+      "avg_output": 636,
+      "avg_reasoning": 0,
+      "latency_p50_ms": 4386,
+      "latency_p95_ms": 6339,
+      "wall_s_8_workers": 30.0,
+      "cost_50_usd": 0.0823,
+      "cost_per_1k_usd": 1.65
+    }
+  },
+  "consistency": {
+    "byte_identical_cases": 32,
+    "decision_consistent_cases": 50,
+    "label_match_all_runs_cases": 47,
+    "errors": 0
+  },
+  "determinism_case0": {
+    "runs": 10,
+    "decision_stability_pct": 100.0,
+    "exact_output_match_pct": 100.0,
+    "decisions": [
+      "READY"
+    ]
+  },
+  "python_overhead_ms_mean": 7.2,
+  "cases": [
+    {
+      "case_id": "case_00000",
+      "distinct_outputs": 1,
+      "decisions": [
+        "READY"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "READY",
+        []
+      ],
+      "got_run1": [
+        "READY",
+        []
+      ]
+    },
+    {
+      "case_id": "case_00001",
+      "distinct_outputs": 1,
+      "decisions": [
+        "READY"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "READY",
+        []
+      ],
+      "got_run1": [
+        "READY",
+        []
+      ]
+    },
+    {
+      "case_id": "case_00002",
+      "distinct_outputs": 1,
+      "decisions": [
+        "NEEDS_FOLLOW_UP"
+      ],
+      "label_match_runs": 0,
+      "label": [
+        "NOT_CLEARED",
+        [
+          "ACUTE_SAFETY_EXCLUSION",
+          "REQUIRED_DOCUMENTATION"
+        ]
+      ],
+      "got_run1": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "REQUIRED_DOCUMENTATION"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00003",
+      "distinct_outputs": 2,
+      "decisions": [
+        "READY"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "READY",
+        []
+      ],
+      "got_run1": [
+        "READY",
+        []
+      ]
+    },
+    {
+      "case_id": "case_00004",
+      "distinct_outputs": 3,
+      "decisions": [
+        "READY"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "READY",
+        []
+      ],
+      "got_run1": [
+        "READY",
+        []
+      ]
+    },
+    {
+      "case_id": "case_00005",
+      "distinct_outputs": 1,
+      "decisions": [
+        "READY"
+      ],
+      "label_match_runs": 0,
+      "label": [
+        "NOT_CLEARED",
+        [
+          "ACUTE_SAFETY_EXCLUSION"
+        ]
+      ],
+      "got_run1": [
+        "READY",
+        []
+      ]
+    },
+    {
+      "case_id": "case_00006",
+      "distinct_outputs": 1,
+      "decisions": [
+        "NEEDS_FOLLOW_UP"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "REQUIRED_TESTING"
+        ]
+      ],
+      "got_run1": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "REQUIRED_TESTING"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00007",
+      "distinct_outputs": 1,
+      "decisions": [
+        "READY"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "READY",
+        []
+      ],
+      "got_run1": [
+        "READY",
+        []
+      ]
+    },
+    {
+      "case_id": "case_00008",
+      "distinct_outputs": 1,
+      "decisions": [
+        "NEEDS_FOLLOW_UP"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "REQUIRED_DOCUMENTATION"
+        ]
+      ],
+      "got_run1": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "REQUIRED_DOCUMENTATION"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00009",
+      "distinct_outputs": 2,
+      "decisions": [
+        "NEEDS_FOLLOW_UP"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "MISSING_REQUIRED_DATA",
+          "REQUIRED_TESTING"
+        ]
+      ],
+      "got_run1": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "MISSING_REQUIRED_DATA",
+          "REQUIRED_TESTING"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00010",
+      "distinct_outputs": 2,
+      "decisions": [
+        "NEEDS_FOLLOW_UP"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "REQUIRED_DOCUMENTATION"
+        ]
+      ],
+      "got_run1": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "REQUIRED_DOCUMENTATION"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00011",
+      "distinct_outputs": 1,
+      "decisions": [
+        "NEEDS_FOLLOW_UP"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "MISSING_REQUIRED_DATA"
+        ]
+      ],
+      "got_run1": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "MISSING_REQUIRED_DATA"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00012",
+      "distinct_outputs": 1,
+      "decisions": [
+        "READY"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "READY",
+        []
+      ],
+      "got_run1": [
+        "READY",
+        []
+      ]
+    },
+    {
+      "case_id": "case_00013",
+      "distinct_outputs": 1,
+      "decisions": [
+        "NEEDS_FOLLOW_UP"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "MISSING_REQUIRED_DATA",
+          "REQUIRED_DOCUMENTATION"
+        ]
+      ],
+      "got_run1": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "MISSING_REQUIRED_DATA",
+          "REQUIRED_DOCUMENTATION"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00014",
+      "distinct_outputs": 1,
+      "decisions": [
+        "NEEDS_FOLLOW_UP"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "REQUIRED_DOCUMENTATION"
+        ]
+      ],
+      "got_run1": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "REQUIRED_DOCUMENTATION"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00015",
+      "distinct_outputs": 1,
+      "decisions": [
+        "READY"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "READY",
+        []
+      ],
+      "got_run1": [
+        "READY",
+        []
+      ]
+    },
+    {
+      "case_id": "case_00016",
+      "distinct_outputs": 1,
+      "decisions": [
+        "READY"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "READY",
+        []
+      ],
+      "got_run1": [
+        "READY",
+        []
+      ]
+    },
+    {
+      "case_id": "case_00017",
+      "distinct_outputs": 1,
+      "decisions": [
+        "NEEDS_FOLLOW_UP"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "REQUIRED_TESTING"
+        ]
+      ],
+      "got_run1": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "REQUIRED_TESTING"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00018",
+      "distinct_outputs": 1,
+      "decisions": [
+        "NEEDS_FOLLOW_UP"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "ANTICOAGULATION_MANAGEMENT"
+        ]
+      ],
+      "got_run1": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "ANTICOAGULATION_MANAGEMENT"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00019",
+      "distinct_outputs": 2,
+      "decisions": [
+        "READY"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "READY",
+        []
+      ],
+      "got_run1": [
+        "READY",
+        []
+      ]
+    },
+    {
+      "case_id": "case_00020",
+      "distinct_outputs": 2,
+      "decisions": [
+        "NEEDS_FOLLOW_UP"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "ANTICOAGULATION_MANAGEMENT"
+        ]
+      ],
+      "got_run1": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "ANTICOAGULATION_MANAGEMENT"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00021",
+      "distinct_outputs": 1,
+      "decisions": [
+        "NEEDS_FOLLOW_UP"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "MISSING_REQUIRED_DATA",
+          "REQUIRED_DOCUMENTATION"
+        ]
+      ],
+      "got_run1": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "MISSING_REQUIRED_DATA",
+          "REQUIRED_DOCUMENTATION"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00022",
+      "distinct_outputs": 1,
+      "decisions": [
+        "NEEDS_FOLLOW_UP"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "MISSING_REQUIRED_DATA",
+          "REQUIRED_DOCUMENTATION"
+        ]
+      ],
+      "got_run1": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "MISSING_REQUIRED_DATA",
+          "REQUIRED_DOCUMENTATION"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00023",
+      "distinct_outputs": 1,
+      "decisions": [
+        "NEEDS_FOLLOW_UP"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "ANTICOAGULATION_MANAGEMENT"
+        ]
+      ],
+      "got_run1": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "ANTICOAGULATION_MANAGEMENT"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00024",
+      "distinct_outputs": 1,
+      "decisions": [
+        "NEEDS_FOLLOW_UP"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "REQUIRED_DOCUMENTATION"
+        ]
+      ],
+      "got_run1": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "REQUIRED_DOCUMENTATION"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00025",
+      "distinct_outputs": 1,
+      "decisions": [
+        "READY"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "READY",
+        []
+      ],
+      "got_run1": [
+        "READY",
+        []
+      ]
+    },
+    {
+      "case_id": "case_00026",
+      "distinct_outputs": 2,
+      "decisions": [
+        "NEEDS_FOLLOW_UP"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "REQUIRED_TESTING"
+        ]
+      ],
+      "got_run1": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "REQUIRED_TESTING"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00027",
+      "distinct_outputs": 1,
+      "decisions": [
+        "NEEDS_FOLLOW_UP"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "ANTICOAGULATION_MANAGEMENT"
+        ]
+      ],
+      "got_run1": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "ANTICOAGULATION_MANAGEMENT"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00028",
+      "distinct_outputs": 2,
+      "decisions": [
+        "NOT_CLEARED"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NOT_CLEARED",
+        [
+          "ACUTE_SAFETY_EXCLUSION",
+          "REQUIRED_DOCUMENTATION"
+        ]
+      ],
+      "got_run1": [
+        "NOT_CLEARED",
+        [
+          "ACUTE_SAFETY_EXCLUSION",
+          "REQUIRED_DOCUMENTATION"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00029",
+      "distinct_outputs": 1,
+      "decisions": [
+        "NEEDS_FOLLOW_UP"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "MISSING_REQUIRED_DATA"
+        ]
+      ],
+      "got_run1": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "MISSING_REQUIRED_DATA"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00030",
+      "distinct_outputs": 1,
+      "decisions": [
+        "READY"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "READY",
+        []
+      ],
+      "got_run1": [
+        "READY",
+        []
+      ]
+    },
+    {
+      "case_id": "case_00031",
+      "distinct_outputs": 1,
+      "decisions": [
+        "NOT_CLEARED"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NOT_CLEARED",
+        [
+          "ACUTE_SAFETY_EXCLUSION",
+          "REQUIRED_DOCUMENTATION"
+        ]
+      ],
+      "got_run1": [
+        "NOT_CLEARED",
+        [
+          "ACUTE_SAFETY_EXCLUSION",
+          "REQUIRED_DOCUMENTATION"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00032",
+      "distinct_outputs": 1,
+      "decisions": [
+        "NOT_CLEARED"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NOT_CLEARED",
+        [
+          "ACUTE_SAFETY_EXCLUSION",
+          "REQUIRED_TESTING"
+        ]
+      ],
+      "got_run1": [
+        "NOT_CLEARED",
+        [
+          "ACUTE_SAFETY_EXCLUSION",
+          "REQUIRED_TESTING"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00033",
+      "distinct_outputs": 3,
+      "decisions": [
+        "NEEDS_FOLLOW_UP"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "MISSING_REQUIRED_DATA"
+        ]
+      ],
+      "got_run1": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "MISSING_REQUIRED_DATA"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00034",
+      "distinct_outputs": 1,
+      "decisions": [
+        "READY"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "READY",
+        []
+      ],
+      "got_run1": [
+        "READY",
+        []
+      ]
+    },
+    {
+      "case_id": "case_00035",
+      "distinct_outputs": 1,
+      "decisions": [
+        "NOT_CLEARED"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NOT_CLEARED",
+        [
+          "ACUTE_SAFETY_EXCLUSION"
+        ]
+      ],
+      "got_run1": [
+        "NOT_CLEARED",
+        [
+          "ACUTE_SAFETY_EXCLUSION"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00036",
+      "distinct_outputs": 2,
+      "decisions": [
+        "NEEDS_FOLLOW_UP"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "ANTICOAGULATION_MANAGEMENT",
+          "REQUIRED_TESTING"
+        ]
+      ],
+      "got_run1": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "ANTICOAGULATION_MANAGEMENT",
+          "REQUIRED_TESTING"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00037",
+      "distinct_outputs": 1,
+      "decisions": [
+        "READY"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "READY",
+        []
+      ],
+      "got_run1": [
+        "READY",
+        []
+      ]
+    },
+    {
+      "case_id": "case_00038",
+      "distinct_outputs": 2,
+      "decisions": [
+        "NEEDS_FOLLOW_UP"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "ANTICOAGULATION_MANAGEMENT"
+        ]
+      ],
+      "got_run1": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "ANTICOAGULATION_MANAGEMENT"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00039",
+      "distinct_outputs": 1,
+      "decisions": [
+        "NEEDS_FOLLOW_UP"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "MISSING_REQUIRED_DATA"
+        ]
+      ],
+      "got_run1": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "MISSING_REQUIRED_DATA"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00040",
+      "distinct_outputs": 1,
+      "decisions": [
+        "NEEDS_FOLLOW_UP"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "REQUIRED_DOCUMENTATION"
+        ]
+      ],
+      "got_run1": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "REQUIRED_DOCUMENTATION"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00041",
+      "distinct_outputs": 1,
+      "decisions": [
+        "READY"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "READY",
+        []
+      ],
+      "got_run1": [
+        "READY",
+        []
+      ]
+    },
+    {
+      "case_id": "case_00042",
+      "distinct_outputs": 2,
+      "decisions": [
+        "NEEDS_FOLLOW_UP"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "REQUIRED_TESTING"
+        ]
+      ],
+      "got_run1": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "REQUIRED_TESTING"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00043",
+      "distinct_outputs": 1,
+      "decisions": [
+        "READY"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "READY",
+        []
+      ],
+      "got_run1": [
+        "READY",
+        []
+      ]
+    },
+    {
+      "case_id": "case_00044",
+      "distinct_outputs": 2,
+      "decisions": [
+        "NEEDS_FOLLOW_UP"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "MISSING_REQUIRED_DATA"
+        ]
+      ],
+      "got_run1": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "MISSING_REQUIRED_DATA"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00045",
+      "distinct_outputs": 2,
+      "decisions": [
+        "READY"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "READY",
+        []
+      ],
+      "got_run1": [
+        "READY",
+        []
+      ]
+    },
+    {
+      "case_id": "case_00046",
+      "distinct_outputs": 2,
+      "decisions": [
+        "NOT_CLEARED"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NOT_CLEARED",
+        [
+          "ACUTE_SAFETY_EXCLUSION"
+        ]
+      ],
+      "got_run1": [
+        "NOT_CLEARED",
+        [
+          "ACUTE_SAFETY_EXCLUSION"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00047",
+      "distinct_outputs": 2,
+      "decisions": [
+        "READY"
+      ],
+      "label_match_runs": 0,
+      "label": [
+        "NOT_CLEARED",
+        [
+          "ACUTE_SAFETY_EXCLUSION"
+        ]
+      ],
+      "got_run1": [
+        "READY",
+        []
+      ]
+    },
+    {
+      "case_id": "case_00048",
+      "distinct_outputs": 2,
+      "decisions": [
+        "NEEDS_FOLLOW_UP"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "ANTICOAGULATION_MANAGEMENT",
+          "REQUIRED_DOCUMENTATION"
+        ]
+      ],
+      "got_run1": [
+        "NEEDS_FOLLOW_UP",
+        [
+          "ANTICOAGULATION_MANAGEMENT",
+          "REQUIRED_DOCUMENTATION"
+        ]
+      ]
+    },
+    {
+      "case_id": "case_00049",
+      "distinct_outputs": 2,
+      "decisions": [
+        "READY"
+      ],
+      "label_match_runs": 3,
+      "label": [
+        "READY",
+        []
+      ],
+      "got_run1": [
+        "READY",
+        []
+      ]
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "case_id": "case_00016",
+  "model": "gpt-5.6-luna",
+  "prompt_version": "bf834c701b3a",
+  "extraction": {
+    "vital_readings": [
+      {
+        "doc_ref": "D2",
+        "measurement": "BLOOD_PRESSURE",
+        "value_text": "132/76",
+        "unit": "mmHg",
+        "time_text": "10:05",
+        "measured_date_text": null,
+        "context": "MEASURED_AT_THIS_ENCOUNTER",
+        "quote": "Vitals 10:05  132/76 mmHg, HR 78, Temperature 99.1 \u00b0F (oral), SpO2 95% RA"
+      },
+      {
+        "doc_ref": "D2",
+        "measurement": "TEMPERATURE",
+        "value_text": "99.1",
+        "unit": "F",
+        "time_text": "10:05",
+        "measured_date_text": null,
+        "context": "MEASURED_AT_THIS_ENCOUNTER",
+        "quote": "Vitals 10:05  132/76 mmHg, HR 78, Temperature 99.1 \u00b0F (oral), SpO2 95% RA"
+      },
+      {
+        "doc_ref": "D4",
+        "measurement": "BLOOD_PRESSURE",
+        "value_text": "189/112",
+        "unit": "NOT_STATED",
+        "time_text": "08:06",
+        "measured_date_text": null,
+        "context": "MEASURED_AT_THIS_ENCOUNTER",
+        "quote": "08:06  NIBP 189/112, T 37.1 C, HR 74, SpO2 96% RA. See addendum."
+      },
+      {
+        "doc_ref": "D4",
+        "measurement": "TEMPERATURE",
+        "value_text": "37.1",
+        "unit": "C",
+        "time_text": "08:06",
+        "measured_date_text": null,
+        "context": "MEASURED_AT_THIS_ENCOUNTER",
+        "quote": "08:06  NIBP 189/112, T 37.1 C, HR 74, SpO2 96% RA. See addendum."
+      },
+      {
+        "doc_ref": "D4",
+        "measurement": "BLOOD_PRESSURE",
+        "value_text": "137/78",
+        "unit": "mmHg",
+        "time_text": "08:30",
+        "measured_date_text": null,
+        "context": "MEASURED_AT_THIS_ENCOUNTER",
+        "quote": "ADDENDUM 08:30: Re-measured 137/78 mmHg following 24 minutes in a quiet room."
+      }
+    ],
+    "medication_mentions": [
+      {
+        "doc_ref": "D2",
+        "drug_as_written": "ASA 81 mg PO daily",
+        "class_hint": "ANTIPLATELET",
+        "status": "CURRENTLY_TAKING",
+        "quote": "  - ASA 81 mg PO daily"
+      },
+      {
+        "doc_ref": "D4",
+        "drug_as_written": "ASA 81 mg PO daily",
+        "class_hint": "ANTIPLATELET",
+        "status": "CURRENTLY_TAKING",
+        "quote": "  - ASA 81 mg PO daily - taking as prescribed"
+      }
+    ],
+    "anticoagulation_plans": [],
+    "consents": [
+      {
+        "doc_ref": "D3",
+        "patient_signature_status": "SIGNED_BY_PATIENT",
+        "signature_quote": "Patient signature on file - signed in clinic 03/13/2026 12:06 (scanned copy attached).",
+        "procedure_quote": "Procedure: inguinal hernia repair"
+      }
+    ],
+    "history_and_physicals": [
+      {
+        "doc_ref": "D1",
+        "completion_status": "CANNOT_DETERMINE",
+        "quote": null
+      },
+      {
+        "doc_ref": "D2",
+        "completion_status": "COMPLETED",
+        "quote": "Electronically signed by Alexis Patel on 02/21/2026."
+      }
+    ],
+    "procedure_date_mentions": [],
+    "procedure_risk_mentions": []
+  }
+}

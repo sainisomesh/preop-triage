@@ -1,0 +1,118 @@
+{
+  "case_id": "case_00025",
+  "model": "gpt-5.6-luna",
+  "prompt_version": "bf834c701b3a",
+  "extraction": {
+    "vital_readings": [
+      {
+        "doc_ref": "D2",
+        "measurement": "BLOOD_PRESSURE",
+        "value_text": "117/75",
+        "unit": "mmHg",
+        "time_text": "10:05",
+        "measured_date_text": null,
+        "context": "MEASURED_AT_THIS_ENCOUNTER",
+        "quote": "Vitals 10:05  Blood pressure 117/75 mmHg, HR 94, Temp 98.7 \u00b0F, SpO2 99% RA"
+      },
+      {
+        "doc_ref": "D2",
+        "measurement": "TEMPERATURE",
+        "value_text": "98.7",
+        "unit": "F",
+        "time_text": "10:05",
+        "measured_date_text": null,
+        "context": "MEASURED_AT_THIS_ENCOUNTER",
+        "quote": "Vitals 10:05  Blood pressure 117/75 mmHg, HR 94, Temp 98.7 \u00b0F, SpO2 99% RA"
+      }
+    ],
+    "medication_mentions": [
+      {
+        "doc_ref": "D2",
+        "drug_as_written": "aspirin",
+        "class_hint": "ANTIPLATELET",
+        "status": "CURRENTLY_TAKING",
+        "quote": "  - aspirin 81 mg PO daily"
+      },
+      {
+        "doc_ref": "D2",
+        "drug_as_written": "clopidogrel",
+        "class_hint": "ANTIPLATELET",
+        "status": "CURRENTLY_TAKING",
+        "quote": "  - clopidogrel 75 mg PO daily"
+      },
+      {
+        "doc_ref": "D3",
+        "drug_as_written": "aspirin",
+        "class_hint": "ANTIPLATELET",
+        "status": "CURRENTLY_TAKING",
+        "quote": "Coronary artery disease s/p drug-eluting stent to the LAD in 2023, on dual antiplatelet therapy."
+      },
+      {
+        "doc_ref": "D3",
+        "drug_as_written": "anticoagulant",
+        "class_hint": "ANTICOAGULANT",
+        "status": "STOPPED",
+        "quote": "Not on any anticoagulant; no history of atrial fibrillation or venous thromboembolism."
+      },
+      {
+        "doc_ref": "D3",
+        "drug_as_written": "aspirin",
+        "class_hint": "ANTIPLATELET",
+        "status": "PERIOPERATIVE_INSTRUCTION",
+        "quote": "  1. Continue aspirin 81 mg daily without interruption through surgery."
+      },
+      {
+        "doc_ref": "D3",
+        "drug_as_written": "clopidogrel",
+        "class_hint": "ANTIPLATELET",
+        "status": "PERIOPERATIVE_INSTRUCTION",
+        "quote": "  2. Hold clopidogrel 5 days before surgery; resume the day after surgery if hemostasis is adequate."
+      },
+      {
+        "doc_ref": "D5",
+        "drug_as_written": "aspirin",
+        "class_hint": "ANTIPLATELET",
+        "status": "CURRENTLY_TAKING",
+        "quote": "  - aspirin 81 mg PO daily - taking as prescribed"
+      },
+      {
+        "doc_ref": "D5",
+        "drug_as_written": "clopidogrel",
+        "class_hint": "ANTIPLATELET",
+        "status": "CURRENTLY_TAKING",
+        "quote": "  - clopidogrel 75 mg PO daily - taking as prescribed"
+      }
+    ],
+    "anticoagulation_plans": [
+      {
+        "doc_ref": "D3",
+        "drug_as_written": "aspirin",
+        "hold_instruction_quote": null,
+        "resume_instruction_quote": null
+      },
+      {
+        "doc_ref": "D3",
+        "drug_as_written": "clopidogrel",
+        "hold_instruction_quote": "  2. Hold clopidogrel 5 days before surgery; resume the day after surgery if hemostasis is adequate.",
+        "resume_instruction_quote": "  2. Hold clopidogrel 5 days before surgery; resume the day after surgery if hemostasis is adequate."
+      }
+    ],
+    "consents": [
+      {
+        "doc_ref": "D4",
+        "patient_signature_status": "SIGNED_BY_PATIENT",
+        "signature_quote": "Patient signature: /s/ Lucas Haddad (electronically signed 03/21/2026 11:36)",
+        "procedure_quote": "Procedure: inguinal hernia repair"
+      }
+    ],
+    "history_and_physicals": [
+      {
+        "doc_ref": "D2",
+        "completion_status": "COMPLETED",
+        "quote": "Electronically signed by Priya T. Desai on 03/08/2026."
+      }
+    ],
+    "procedure_date_mentions": [],
+    "procedure_risk_mentions": []
+  }
+}

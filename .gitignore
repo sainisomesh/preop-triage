@@ -10,6 +10,7 @@ env/
 
 # Python tooling
 .pytest_cache/
+.hypothesis/
 .mypy_cache/
 .ruff_cache/
 .coverage
@@ -31,3 +32,4 @@ dist/
 data/baseline_outputs.jsonl
 data/eval_report.json
 data/determinism_report.json
+data/consistency_report.json
