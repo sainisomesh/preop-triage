@@ -19,7 +19,7 @@ The provided harness (`run_baseline.py`, `run_evals.py`, `view_report.py`) is un
 
 ### Architecture
 
-I split the system into a constrained extraction layer and a pure Python policy engine so the model does only what it is good at. One strict-schema call reads the chart and returns facts (vitals, medication statements, hold and resume instructions, consent signatures), each with a verbatim quote. Everything that must be exact lives in Python: date math, recency sorting, unit conversion, anticoagulant versus antiplatelet classification, and procedure matching. The model never sees the policy, so it has nothing to improvise, and Python rejects any quote it cannot find in the source. Once the policy moved into code, reasoning tokens were pure cost, so I pair `temperature=0` with `reasoning="none"`. Instructions and schema form a byte-identical 2,100-token prefix, above the 1,024-token caching threshold and routed with a versioned `prompt_cache_key`, with every case-specific detail after it. Verbatim quotes cost more output tokens than a bare decision, but in exchange I get a 54% cache hit on first calls and 99.9% on repeats. And because Python snaps every quote to its full source line, the outputs were byte-identical on all 50 cases across repeated runs.
+I split the system into a constrained extraction layer and a pure Python policy engine so the model does only what it is good at. One strict-schema call reads the chart and returns facts (vitals, medication statements, hold and resume instructions, consent signatures), each with a verbatim quote. Everything that must be exact lives in Python: date math, recency sorting, unit conversion, anticoagulant versus antiplatelet classification, and procedure matching. The model never sees the policy, so it has nothing to improvise, and Python rejects any quote it cannot find in the source. Once the policy moved into code, reasoning tokens were pure cost, so I pair `temperature=0` with `reasoning="none"`. Instructions and schema form a byte-identical 2,100-token prefix, above the 1,024-token caching threshold and routed with a versioned `prompt_cache_key`, with every case-specific detail after it. Verbatim quotes cost more output tokens than a bare decision, but because that prefix is shared across patients, about 54% of input tokens are cached even for a patient never seen before (roughly 27% cheaper per case), and retries or re-triage of the same chart reach 99.9%. And because Python snaps every quote to its full source line, the outputs were byte-identical on all 50 cases across repeated runs.
 
 ### Proving it on a smaller model
 
@@ -35,7 +35,7 @@ The output is built for the pre-op nurse who has to trust it. Each issue carries
 |---|---|---|---|---|
 | Eval score | 74.67% | 100% (96.0% first run) | 97.33% | 100% |
 | Byte-identical across 3 runs | — | 36 / 50 | — | 50 / 50 |
-| Cache hit, first / repeat | 4.0% | 44% / 79% | 0% | 54% / 99.9% |
+| Cache hit, new patient / repeat | 4.0% | 44% / 79% | 0% | 54% / 99.9% |
 | Reasoning / output tokens per case | 0 / 234 | 0 / 633 | 145 / 297 | 0 / 511 |
 | p50 latency per call | 2.1 s | 4.3 s | 3.3 s | 3.8 s |
-| Cost per 1,000 cases, first / repeat | $1.55 | $2.04 / $1.62 | $0.96 | $1.01 / $0.70 |
+| Cost per 1,000 cases, new patient / repeat | $1.55 | $2.04 / $1.62 | $0.96 | $1.01 / $0.70 |
