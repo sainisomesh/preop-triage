@@ -4,47 +4,47 @@
     "run1": {
       "calls": 50,
       "avg_input": 3830,
-      "avg_cached": 1651,
-      "cache_hit_pct": 43.1,
-      "avg_output": 620,
+      "avg_cached": 1690,
+      "cache_hit_pct": 44.1,
+      "avg_output": 633,
       "avg_reasoning": 0,
-      "latency_p50_ms": 4398,
-      "latency_p95_ms": 6010,
-      "wall_s_8_workers": 27.9,
-      "cost_50_usd": 0.1015,
-      "cost_per_1k_usd": 2.03
+      "latency_p50_ms": 4311,
+      "latency_p95_ms": 7622,
+      "wall_s_8_workers": 31.0,
+      "cost_50_usd": 0.1019,
+      "cost_per_1k_usd": 2.04
     },
     "run2": {
       "calls": 50,
       "avg_input": 3830,
-      "avg_cached": 3090,
-      "cache_hit_pct": 80.7,
-      "avg_output": 612,
+      "avg_cached": 3026,
+      "cache_hit_pct": 79.0,
+      "avg_output": 624,
       "avg_reasoning": 0,
-      "latency_p50_ms": 4213,
-      "latency_p95_ms": 5435,
-      "wall_s_8_workers": 26.8,
-      "cost_50_usd": 0.0792,
-      "cost_per_1k_usd": 1.58
+      "latency_p50_ms": 4153,
+      "latency_p95_ms": 5502,
+      "wall_s_8_workers": 27.3,
+      "cost_50_usd": 0.0811,
+      "cost_per_1k_usd": 1.62
     },
     "run3": {
       "calls": 50,
       "avg_input": 3830,
-      "avg_cached": 3013,
-      "cache_hit_pct": 78.7,
-      "avg_output": 636,
+      "avg_cached": 2941,
+      "cache_hit_pct": 76.8,
+      "avg_output": 616,
       "avg_reasoning": 0,
-      "latency_p50_ms": 4386,
-      "latency_p95_ms": 6339,
-      "wall_s_8_workers": 30.0,
-      "cost_50_usd": 0.0823,
-      "cost_per_1k_usd": 1.65
+      "latency_p50_ms": 4127,
+      "latency_p95_ms": 5874,
+      "wall_s_8_workers": 26.9,
+      "cost_50_usd": 0.0817,
+      "cost_per_1k_usd": 1.63
     }
   },
   "consistency": {
-    "byte_identical_cases": 32,
+    "byte_identical_cases": 36,
     "decision_consistent_cases": 50,
-    "label_match_all_runs_cases": 47,
+    "label_match_all_runs_cases": 50,
     "errors": 0
   },
   "determinism_case0": {
@@ -55,7 +55,7 @@
       "READY"
     ]
   },
-  "python_overhead_ms_mean": 7.2,
+  "python_overhead_ms_mean": 7.7,
   "cases": [
     {
       "case_id": "case_00000",
@@ -75,7 +75,7 @@
     },
     {
       "case_id": "case_00001",
-      "distinct_outputs": 1,
+      "distinct_outputs": 2,
       "decisions": [
         "READY"
       ],
@@ -93,9 +93,9 @@
       "case_id": "case_00002",
       "distinct_outputs": 1,
       "decisions": [
-        "NEEDS_FOLLOW_UP"
+        "NOT_CLEARED"
       ],
-      "label_match_runs": 0,
+      "label_match_runs": 3,
       "label": [
         "NOT_CLEARED",
         [
@@ -104,15 +104,16 @@
         ]
       ],
       "got_run1": [
-        "NEEDS_FOLLOW_UP",
+        "NOT_CLEARED",
         [
+          "ACUTE_SAFETY_EXCLUSION",
           "REQUIRED_DOCUMENTATION"
         ]
       ]
     },
     {
       "case_id": "case_00003",
-      "distinct_outputs": 2,
+      "distinct_outputs": 1,
       "decisions": [
         "READY"
       ],
@@ -128,7 +129,7 @@
     },
     {
       "case_id": "case_00004",
-      "distinct_outputs": 3,
+      "distinct_outputs": 2,
       "decisions": [
         "READY"
       ],
@@ -146,9 +147,9 @@
       "case_id": "case_00005",
       "distinct_outputs": 1,
       "decisions": [
-        "READY"
+        "NOT_CLEARED"
       ],
-      "label_match_runs": 0,
+      "label_match_runs": 3,
       "label": [
         "NOT_CLEARED",
         [
@@ -156,13 +157,15 @@
         ]
       ],
       "got_run1": [
-        "READY",
-        []
+        "NOT_CLEARED",
+        [
+          "ACUTE_SAFETY_EXCLUSION"
+        ]
       ]
     },
     {
       "case_id": "case_00006",
-      "distinct_outputs": 1,
+      "distinct_outputs": 2,
       "decisions": [
         "NEEDS_FOLLOW_UP"
       ],
@@ -338,7 +341,7 @@
     },
     {
       "case_id": "case_00015",
-      "distinct_outputs": 1,
+      "distinct_outputs": 2,
       "decisions": [
         "READY"
       ],
@@ -410,7 +413,7 @@
     },
     {
       "case_id": "case_00019",
-      "distinct_outputs": 2,
+      "distinct_outputs": 1,
       "decisions": [
         "READY"
       ],
@@ -546,7 +549,7 @@
     },
     {
       "case_id": "case_00026",
-      "distinct_outputs": 2,
+      "distinct_outputs": 1,
       "decisions": [
         "NEEDS_FOLLOW_UP"
       ],
@@ -586,7 +589,7 @@
     },
     {
       "case_id": "case_00028",
-      "distinct_outputs": 2,
+      "distinct_outputs": 3,
       "decisions": [
         "NOT_CLEARED"
       ],
@@ -628,7 +631,7 @@
     },
     {
       "case_id": "case_00030",
-      "distinct_outputs": 1,
+      "distinct_outputs": 2,
       "decisions": [
         "READY"
       ],
@@ -688,7 +691,7 @@
     },
     {
       "case_id": "case_00033",
-      "distinct_outputs": 3,
+      "distinct_outputs": 2,
       "decisions": [
         "NEEDS_FOLLOW_UP"
       ],
@@ -782,7 +785,7 @@
     },
     {
       "case_id": "case_00038",
-      "distinct_outputs": 2,
+      "distinct_outputs": 1,
       "decisions": [
         "NEEDS_FOLLOW_UP"
       ],
@@ -858,7 +861,7 @@
     },
     {
       "case_id": "case_00042",
-      "distinct_outputs": 2,
+      "distinct_outputs": 1,
       "decisions": [
         "NEEDS_FOLLOW_UP"
       ],
@@ -930,7 +933,7 @@
     },
     {
       "case_id": "case_00046",
-      "distinct_outputs": 2,
+      "distinct_outputs": 1,
       "decisions": [
         "NOT_CLEARED"
       ],
@@ -952,9 +955,9 @@
       "case_id": "case_00047",
       "distinct_outputs": 2,
       "decisions": [
-        "READY"
+        "NOT_CLEARED"
       ],
-      "label_match_runs": 0,
+      "label_match_runs": 3,
       "label": [
         "NOT_CLEARED",
         [
@@ -962,13 +965,15 @@
         ]
       ],
       "got_run1": [
-        "READY",
-        []
+        "NOT_CLEARED",
+        [
+          "ACUTE_SAFETY_EXCLUSION"
+        ]
       ]
     },
     {
       "case_id": "case_00048",
-      "distinct_outputs": 2,
+      "distinct_outputs": 1,
       "decisions": [
         "NEEDS_FOLLOW_UP"
       ],
@@ -990,7 +995,7 @@
     },
     {
       "case_id": "case_00049",
-      "distinct_outputs": 2,
+      "distinct_outputs": 1,
       "decisions": [
         "READY"
       ],

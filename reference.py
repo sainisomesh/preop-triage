@@ -402,21 +402,63 @@ PROCEDURE_RISK_EXCLUDE_PATTERN = re.compile(
     r"bleed|thrombo|cardiac|fall|anesthe|\basa\b|stroke|aspiration", re.IGNORECASE
 )
 
-_PROCEDURE_STOPWORDS = frozenset({"elective", "procedure", "surgery", "surgical", "the", "of", "a", "an", "and", "with", "for", "left", "right", "bilateral"})
+_PROCEDURE_STOPWORDS = frozenset({"elective", "procedure", "surgery", "surgical", "the", "of", "a", "an", "and", "with", "for", "to"})
+_LATERALITY = {"left": "left", "lt": "left", "right": "right", "rt": "right", "bilateral": "bilateral", "bilat": "bilateral"}
+
+# Deterministic synonym/abbreviation table, applied to both names before matching. Kept
+# deliberately small and reviewable: add entries with clinical sign-off, not ad hoc. Names that
+# still don't match fail closed; ai_procedure_matcher.py can *suggest* a match to the nurse.
+PROCEDURE_SYNONYMS: dict[str, tuple[str, ...]] = {
+    "cabg": ("coronary", "artery", "bypass", "grafting"),
+    "graft": ("grafting",),
+    "tka": ("total", "knee", "arthroplasty"),
+    "tkr": ("total", "knee", "arthroplasty"),
+    "tha": ("total", "hip", "arthroplasty"),
+    "thr": ("total", "hip", "arthroplasty"),
+    "replacement": ("arthroplasty",),
+    "herniorrhaphy": ("hernia", "repair"),
+    "hernioplasty": ("hernia", "repair"),
+    "lap": ("laparoscopic",),
+    "chole": ("cholecystectomy",),
+    "ctr": ("carpal", "tunnel", "release"),
+    "aaa": ("abdominal", "aortic", "aneurysm"),
+    "rygb": ("roux", "en", "y", "gastric", "bypass"),
+    "egd": ("esophagogastroduodenoscopy",),
+    "orif": ("open", "reduction", "internal", "fixation"),
+    "tah": ("total", "abdominal", "hysterectomy"),
+}
+
+
+def _procedure_parts(value: str) -> tuple[frozenset[str], frozenset[str]]:
+    content: set[str] = set()
+    sides: set[str] = set()
+    for token in _tokens(value):
+        if token in _LATERALITY:
+            sides.add(_LATERALITY[token])
+        elif token not in _PROCEDURE_STOPWORDS:
+            content.update(PROCEDURE_SYNONYMS.get(token, (token,)))
+    return frozenset(content), frozenset(sides)
 
 
 def procedure_tokens(value: str) -> frozenset[str]:
-    return frozenset(token for token in _tokens(value) if token not in _PROCEDURE_STOPWORDS)
+    return _procedure_parts(value)[0]
+
+
+def procedure_match_detail(scheduled: str, consented: str) -> tuple[bool, str]:
+    # Laterality first: if both names state a side and they differ, it is a wrong-site consent.
+    # Then every content word of the shorter name (after synonym expansion) must appear in the
+    # longer one, so "...bypass grafting" vs "gastric bypass" still fails.
+    scheduled_tokens, scheduled_sides = _procedure_parts(scheduled)
+    consented_tokens, consented_sides = _procedure_parts(consented)
+    if scheduled_sides and consented_sides and scheduled_sides != consented_sides:
+        return False, f"laterality conflict: scheduled {sorted(scheduled_sides)} vs consent {sorted(consented_sides)}"
+    if not scheduled_tokens or not consented_tokens:
+        return False, "procedure name is empty after normalization"
+    smaller, larger = sorted((scheduled_tokens, consented_tokens), key=len)
+    if smaller <= larger:
+        return True, "procedure names match"
+    return False, f"procedure words differ: {sorted(smaller - larger)} not in the other name"
 
 
 def procedures_match(scheduled: str, consented: str) -> bool:
-    # Every content word of the shorter name must appear in the longer one. Strict on
-    # purpose: "...bypass grafting" vs "gastric bypass" fails, and synonyms ("hip
-    # replacement" vs "arthroplasty") fail closed into REQUIRED_DOCUMENTATION follow-up.
-
-    scheduled_tokens = procedure_tokens(scheduled)
-    consented_tokens = procedure_tokens(consented)
-    if not scheduled_tokens or not consented_tokens:
-        return False
-    smaller, larger = sorted((scheduled_tokens, consented_tokens), key=len)
-    return smaller <= larger
+    return procedure_match_detail(scheduled, consented)[0]

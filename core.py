@@ -72,16 +72,19 @@ def triage_submission(
     client: Any | None = None,
     facility_timezone: str | None = None,
     on_telemetry: Callable[[ExtractionTelemetry], None] | None = None,
+    procedure_matcher: Callable[[str, str], tuple[bool, str, str]] | None = None,
 ) -> TriageOutput:
     # Raises ExtractionError (refusal/truncation) or an OpenAI error after 2 retries rather
     # than guessing; callers should send those cases to manual review. on_telemetry gets
     # token/cache usage, which is kept out of TriageOutput so outputs stay byte-identical.
+    # procedure_matcher (off by default; see ai_procedure_matcher.py) only adds informational
+    # suggestions when a consent's procedure name fails deterministic matching.
 
     if not isinstance(submission, PatientSubmission):
         submission = PatientSubmission.model_validate(submission)
     timezone = facility_timezone or os.environ.get(FACILITY_TIMEZONE_ENV) or None
     facts = extract_case_facts(
         submission, model=model, client=client or get_openai_client(), facility_timezone=timezone,
-        on_telemetry=on_telemetry,
+        on_telemetry=on_telemetry, procedure_matcher=procedure_matcher,
     )
     return evaluate(facts)

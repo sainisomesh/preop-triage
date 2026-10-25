@@ -279,3 +279,99 @@ def test_degree_sign_corruption_in_quotes_still_verifies(submission, extraction,
     assert output.decision == "NOT_CLEARED"
     assert categories(output) == ["ACUTE_SAFETY_EXCLUSION"]
     assert check(output, "R4.BLOOD_PRESSURE").evidence.quotes[0].text == line  # evidence is the clean source line
+
+
+# ---------------------------------------------------------------- procedure synonyms, laterality, AI suggestions
+
+
+@pytest.mark.parametrize(
+    ("scheduled", "consented", "matches"),
+    [
+        ("Elective total hip arthroplasty", "right hip replacement", True),
+        ("Elective coronary artery bypass grafting", "CABG x3", True),
+        ("Elective inguinal hernia repair", "left inguinal herniorrhaphy", True),
+        ("Elective Roux-en-Y gastric bypass", "RYGB", True),
+        ("Elective total knee arthroplasty", "TKA", True),
+        ("Elective left knee arthroscopy", "right knee arthroscopy", False),  # wrong side
+        ("Elective right total knee arthroplasty", "bilateral total knee arthroplasty", False),
+        ("Elective thyroidectomy", "coronary artery bypass grafting", False),
+        ("Elective coronary artery bypass grafting", "Roux-en-Y gastric bypass", False),
+        ("Elective total hip arthroplasty", "total knee arthroplasty", False),
+    ],
+)
+def test_procedure_synonyms_and_laterality(scheduled, consented, matches):
+    from reference import procedure_match_detail
+
+    assert procedure_match_detail(scheduled, consented)[0] is matches
+
+
+def test_wrong_side_consent_is_a_documentation_issue_with_a_clear_reason(submission, extraction):
+    submission["procedure"]["procedure_type"] = "Elective left inguinal hernia repair"
+    submission["documents"][1]["text"] = submission["documents"][1]["text"].replace("Procedure: inguinal hernia repair", "Procedure: right inguinal hernia repair")
+    extraction["consents"] = [c.model_copy(update={"procedure_quote": "right inguinal hernia repair"}) for c in extraction["consents"]]
+    output = run_pipeline(submission, extraction)
+    assert categories(output) == ["REQUIRED_DOCUMENTATION"]
+    assert "laterality conflict" in check(output, "R1.SURGICAL_CONSENT").evidence.summary
+
+
+def _unknown_synonym_case(submission, extraction):
+    submission["procedure"]["procedure_type"] = "Elective anterior cruciate ligament repair"
+    submission["documents"][1]["text"] = submission["documents"][1]["text"].replace("Procedure: inguinal hernia repair", "Procedure: ACL reconstruction")
+    extraction["consents"] = [c.model_copy(update={"procedure_quote": "ACL reconstruction"}) for c in extraction["consents"]]
+
+
+def test_ai_suggestion_is_informational_and_never_passes_the_consent(submission, extraction):
+    from extraction import preprocess, suggest_procedure_matches, verify_extraction, DocumentExtraction
+    from policy_engine import evaluate
+    from schemas import PatientSubmission
+
+    _unknown_synonym_case(submission, extraction)
+    calls = []
+
+    def fake_matcher(scheduled, consented):
+        calls.append((scheduled, consented))
+        return True, "ACL reconstruction is the standard repair of the anterior cruciate ligament.", "fake matcher"
+
+    facts = verify_extraction(DocumentExtraction(**extraction), preprocess(PatientSubmission.model_validate(submission), model="m"))
+    suggest_procedure_matches(facts, fake_matcher)
+    output = evaluate(facts)
+
+    assert calls == [("Elective anterior cruciate ligament repair", "ACL reconstruction")]
+    assert categories(output) == ["REQUIRED_DOCUMENTATION"]  # still fails closed
+    info = [i for i in output.audit.informational_checks if i.check == "INFO.PROCEDURE_EQUIVALENCE"]
+    assert len(info) == 1 and info[0].status == "AI_SUGGESTS_SAME_PROCEDURE" and info[0].affects_decision is False
+
+
+def test_ai_matcher_is_not_called_when_names_already_match_and_errors_are_contained(submission, extraction):
+    from extraction import preprocess, suggest_procedure_matches, verify_extraction, DocumentExtraction
+    from schemas import PatientSubmission
+
+    def exploding_matcher(scheduled, consented):
+        raise TimeoutError("model down")
+
+    facts = verify_extraction(DocumentExtraction(**extraction), preprocess(PatientSubmission.model_validate(submission), model="m"))
+    suggest_procedure_matches(facts, exploding_matcher)  # names match: never called
+    assert facts.procedure_suggestions == [] and facts.warnings == []
+
+    _unknown_synonym_case(submission, extraction)
+    facts = verify_extraction(DocumentExtraction(**extraction), preprocess(PatientSubmission.model_validate(submission), model="m"))
+    suggest_procedure_matches(facts, exploding_matcher)
+    assert facts.procedure_suggestions == []
+    assert any("procedure matcher failed" in w for w in facts.warnings)
+
+
+def test_openai_procedure_matcher_request_shape():
+    from types import SimpleNamespace
+    from unittest.mock import Mock
+
+    from ai_procedure_matcher import ProcedureEquivalence, openai_procedure_matcher
+
+    client = Mock()
+    client.responses.parse.return_value = SimpleNamespace(output_parsed=ProcedureEquivalence(same_procedure=False, rationale="Different joint."))
+    same, rationale, source = openai_procedure_matcher("gpt-5.6-luna", client=client)("total hip arthroplasty", "knee replacement")
+    call = client.responses.parse.call_args.kwargs
+    assert (same, rationale, source) == (False, "Different joint.", "gpt-5.6-luna procedure matcher")
+    assert call["temperature"] == 0 and call["store"] is False and call["reasoning"] == {"effort": "none"}
+    assert call["text_format"] is ProcedureEquivalence
+    openai_procedure_matcher("gpt-4.1-mini", client=client)("a", "b")
+    assert "reasoning" not in client.responses.parse.call_args.kwargs

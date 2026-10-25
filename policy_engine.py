@@ -36,7 +36,7 @@ from reference import (
     is_nursing_intake_title,
     normalize_for_match,
     parse_iso_date,
-    procedures_match,
+    procedure_match_detail,
     structured_procedure_date,
     structured_procedure_risk,
 )
@@ -54,7 +54,9 @@ from schemas import (
     TriageOutput,
 )
 
-PIPELINE_VERSION = "2.1.0"  # 2.1.0: fail-closed unverified vitals, degree-sign normalization
+# 2.1.0: fail-closed unverified vitals, degree-sign normalization, pre-op filtering of H&P/labs.
+# 2.2.0: procedure synonyms + laterality conflicts; optional AI procedure suggestions (informational).
+PIPELINE_VERSION = "2.2.0"
 
 # =====================================================================
 # Helpers
@@ -310,9 +312,10 @@ def check_surgical_consent(facts: CaseFacts) -> list[RuleCheck]:
         elif not consent.procedure_name:
             problems.append(f"{label} does not name a procedure")
             problem_quotes += [consent.signature]
-        elif not procedures_match(facts.procedure_type, consent.procedure_name):
+        elif not (match := procedure_match_detail(facts.procedure_type, consent.procedure_name))[0]:
             named = consent.procedure.text if consent.procedure else consent.procedure_name
-            problems.append(f"{label} names {named!r}, which does not match the scheduled procedure {facts.procedure_type!r}")
+            problems.append(f"{label} names {named!r}, which does not match the scheduled procedure "
+                            f"{facts.procedure_type!r} ({match[1]})")
             problem_quotes += [consent.procedure, consent.signature]
         else:
             valid.append(consent)
@@ -713,6 +716,22 @@ def review_npo_instructions(facts: CaseFacts) -> InformationalCheck:
                               summary=f"{len(notes)} nursing intake note(s) on file; none mention NPO/fasting instructions.")
 
 
+def review_procedure_suggestions(facts: CaseFacts) -> list[InformationalCheck]:
+    # Optional AI suggestions for consent/procedure names that failed deterministic matching.
+    # Informational only: the consent rule above already failed closed and stays failed; a nurse
+    # confirms. Accepted pairs belong in reference.PROCEDURE_SYNONYMS, after clinical review.
+    checks = []
+    for suggestion in sorted(facts.procedure_suggestions, key=lambda x: x.doc_id):
+        status = "AI_SUGGESTS_SAME_PROCEDURE" if suggestion.same_procedure else "AI_SUGGESTS_DIFFERENT_PROCEDURE"
+        checks.append(InformationalCheck(
+            check="INFO.PROCEDURE_EQUIVALENCE", status=status, quotes=[],
+            summary=(f"Consent {suggestion.doc_id} names {suggestion.consented!r}; scheduled {suggestion.scheduled!r}. "
+                     f"{suggestion.source} suggests {'the same' if suggestion.same_procedure else 'a different'} procedure: "
+                     f"{suggestion.rationale} Nurse to confirm; the consent rule is unchanged."),
+        ))
+    return checks
+
+
 # =====================================================================
 # Decision
 # =====================================================================
@@ -782,7 +801,7 @@ def evaluate(facts: CaseFacts) -> TriageOutput:
         procedure_risk=procedure.risk_field,
         rule_checks=checks,
         excluded_evidence=sorted(facts.excluded, key=lambda e: (e.source_type, e.source_id, e.reason)),
-        informational_checks=[review_npo_instructions(facts)],
+        informational_checks=[review_npo_instructions(facts), *review_procedure_suggestions(facts)],
         warnings=sorted(set(facts.warnings)),
     )
     return TriageOutput(

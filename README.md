@@ -29,6 +29,8 @@ Note: this exercise is evaluated on engineering judgment. You may not reach a 10
 
 The model reads the documents and returns facts with verbatim quotes. Python checks every quote against the source text, then applies the policy deterministically. The provided harness (`run_baseline.py`, `run_evals.py`, `view_report.py`) is unchanged.
 
+The full write-up of the approach and design decisions is in [WRITEUP.md](WRITEUP.md). This README covers running the code, results, design and limits.
+
 ## Setup
 
 ```bash
@@ -48,7 +50,7 @@ echo 'OPENAI_API_KEY=sk-...' > .env            # gitignored; the Makefile loads 
 
 | Command | What it does | Needs API key |
 |---|---|---|
-| `make test` | 159 offline tests, including Hypothesis property tests (`HYPOTHESIS_PROFILE=stress make test` runs 3,000 examples per property) | no |
+| `make test` | 173 offline tests, including Hypothesis property tests (`HYPOTHESIS_PROFILE=stress make test` runs 3,000 examples per property) | no |
 | `make baseline` | runs all 50 cases → `data/baseline_outputs.jsonl` | yes |
 | `make evals` | scores with the provided harness → `data/eval_report.json` | yes |
 | `make determinism` | provided 10× replay of one record → `data/determinism_report.json` | yes |
@@ -72,15 +74,18 @@ The task: decide whether a patient can be scheduled, and list what's missing or 
 
 | | Starter, `gpt-4.1-mini` (repo default) | Starter, `gpt-5.6-luna` | Pipeline, `gpt-4.1-mini` | **Pipeline, `gpt-5.6-luna`** |
 |---|---|---|---|---|
-| `make evals` score | 74.67% | 97.33% | 96.0% | **100.0%** |
-| Schema / decision / categories | 100 / 68 / 56% | 100 / 98 / 94% | 100 / 94 / 94% | 100 / 100 / 100% |
+| `make evals` score | 74.67% | 97.33% | **100.0%** | **100.0%** |
+| Schema / decision / categories | 100 / 68 / 56% | 100 / 98 / 94% | 100 / 100 / 100% | 100 / 100 / 100% |
 | Case 0, 10 runs: same decision | 100% (but wrong) | not run | 100% | **100%** |
 | Case 0, 10 runs: exact output | 10% | not run | 100% | **100%** |
-| Byte-identical full output, 3 runs × 50 cases | — | — | 32 / 50 | **50 / 50** |
+| Label match, 3 runs × 50 cases | — | — | 150 / 150 | **150 / 150** |
+| Byte-identical full output, 3 runs × 50 cases | — | — | 36 / 50 | **50 / 50** |
 
-Run dates: starter on `gpt-5.6-luna` 2026-10-23, before any changes; everything else 2026-10-24. The `gpt-4.1-mini` pipeline run is an experiment: the same code with the `reasoning` parameter removed, because that model doesn't accept it.
+Run dates: starter on `gpt-5.6-luna` 2026-10-23, before any changes; starter on `gpt-4.1-mini` and the `gpt-5.6-luna` pipeline 2026-10-24; `gpt-4.1-mini` pipeline 2026-10-24 on the current code (2.2.0). The `gpt-4.1-mini` pipeline run uses the same code with the `reasoning` parameter removed, because that model doesn't accept it.
 
-The starter code fails for the same reason on both models: the model applies the policy itself. On `gpt-5.6-luna` it treated aspirin as an anticoagulant, reported window violations when there was no procedure date, and double-counted an unknown anticoagulant status. On `gpt-4.1-mini` it misses 29 of 50 cases. The same two-layer pipeline on `gpt-4.1-mini` misses only 3, so the architecture, not the model, does most of the work. Those 3 misses led to the fail-closed vitals fix described below.
+The starter code fails for the same reason on both models: the model applies the policy itself. On `gpt-5.6-luna` it treated aspirin as an anticoagulant, reported window violations when there was no procedure date, and double-counted an unknown anticoagulant status. On `gpt-4.1-mini` it misses 29 of 50 cases. The same two-layer pipeline on `gpt-4.1-mini` gets all 50, so the architecture, not the model, does the work.
+
+On the way there, the first `gpt-4.1-mini` pipeline run (2.0.0) missed 3 acute-safety cases. The model corrupted the degree sign in its quotes, Python correctly rejected them, and Rule 4 then fell back to older normal vitals. That led to the degree-sign normalisation and the fail-closed vitals rule described below. Re-measured on the current code, all three are NOT_CLEARED as labelled.
 
 ## Design
 
@@ -121,9 +126,10 @@ submission ─► Layer 1  extraction.py ─────────────
   - A plan needs both a hold and a resume instruction, each with a concrete time.
   - The plan must be for the drug the patient is taking now, matched across brand and generic names.
   - Antiplatelets never require a plan.
+- **Consent:** must be signed by the patient and name the scheduled procedure. Names are compared after a reviewed synonym/abbreviation table (`reference.PROCEDURE_SYNONYMS`), and a left/right conflict always fails (wrong-site). Anything else that doesn't match fails closed into `REQUIRED_DOCUMENTATION`. If the optional `procedure_matcher` (`ai_procedure_matcher.py`) is passed to `triage_submission`, a separate small model call adds an `INFO.PROCEDURE_EQUIVALENCE` suggestion for the nurse; it never passes the consent. Confirmed pairs go into the synonym table.
 - **H&P and labs:** only items dated on or before the procedure count. "Most recent result" means the most recent pre-procedure result.
 - **Vitals:** a later recheck always supersedes an earlier abnormal reading. Same-day readings that can't be ordered (UTC structured timestamps vs local note times with no facility timezone) use the most severe value, and the audit says why.
-- **Fail-closed vitals:** suppose a reading failed verification (quote not in the note, value not in the quote, implausible or malformed) and no newer verified reading of the same type supersedes it. Then Rule 4 is INDETERMINATE and the case gets `MISSING_REQUIRED_DATA`, so a nurse confirms the latest value. Before this rule, an unverifiable 157/117 silently fell back to an older normal reading and returned READY. An unverified value is never used to issue NOT_CLEARED either.
+- **Fail-closed vitals:** suppose a reading failed verification (quote not in the note, value not in the quote, implausible or malformed) and no newer verified reading of the same type supersedes it. Then Rule 4 is INDETERMINATE and the case gets `MISSING_REQUIRED_DATA`, so a nurse confirms the latest value. Before this rule, an unverifiable 157/117 silently fell back to an older normal reading and returned READY (the first `gpt-4.1-mini` run). An unverified value is never used to issue NOT_CLEARED either.
 - **Safety rule:** a rule that couldn't be evaluated can never produce READY.
 
 ### 2. Starter baselines vs this pipeline: measured tokens, latency and cost
@@ -137,16 +143,16 @@ Reasoning tokens are billed as output.
 | Per case (mean) | Starter, `gpt-4.1-mini` | Starter, `gpt-5.6-luna` (`reasoning: medium`) | Pipeline, `gpt-4.1-mini`, first / repeat | **Pipeline, `gpt-5.6-luna`, first / repeat** |
 |---|---|---|---|---|
 | Input tokens | 3,039 | 3,029 | 3,830 | 3,828 |
-| Cached input tokens | 120 | 0 | 1,651 / 3,090 | 2,058 / 3,825 |
-| Cache hit (by tokens) | 4.0% | 0.0% | 43.1% / 80.7% | **53.8% / 99.9%** |
+| Cached input tokens | 120 | 0 | 1,690 / 3,026 | 2,058 / 3,825 |
+| Cache hit (by tokens) | 4.0% | 0.0% | 44.1% / 79.0% | **53.8% / 99.9%** |
 | Reasoning tokens | 0 | 145 | 0 | **0** |
-| Visible = billed output tokens | 234 | 151 (297 billed) | 620 / 612 | 511 / 522 |
-| Latency per call, p50 | 2.08 s | 3.30 s | 4.40 / 4.21 s | 3.77 / 3.39 s |
-| Cost per 1,000 cases | $1.55 | $0.96 | $2.03 / $1.58 | **$1.01 / $0.70** |
+| Visible = billed output tokens | 234 | 151 (297 billed) | 633 / 624 | 511 / 522 |
+| Latency per call, p50 | 2.08 s | 3.30 s | 4.31 / 4.15 s | 3.77 / 3.39 s |
+| Cost per 1,000 cases | $1.55 | $0.96 | $2.04 / $1.62 | **$1.01 / $0.70** |
 
 - **Against the repo default (`gpt-4.1-mini`):** the pipeline is 35% cheaper on first calls and 55% cheaper on repeats, and accuracy rises from 74.67% to 100%. It's slower per call (p50 2.1 s → 3.4–3.8 s).
 - **Reasoning tokens are eliminated.** On `gpt-5.6-luna` the starter spends 145 reasoning tokens per case applying the policy. The pipeline sends `reasoning.effort="none"`, and Python applies the policy in about 45 ms per case.
-- **Same pipeline on `gpt-4.1-mini`:** accuracy goes from 74.67% to 96.0%, but it costs more than its own starter: 31% more on first calls and about the same on repeats. Its quotes are longer (about 615 output tokens at $1.60 per 1M) and it caches less. Model choice drives cost; the architecture drives accuracy and determinism.
+- **Same pipeline on `gpt-4.1-mini`:** accuracy goes from 74.67% to 100%, but it costs more than its own starter: 32% more on first calls and 5% more on repeats. Its quotes are longer (about 630 output tokens at $1.60 per 1M), it caches less, and it's less byte-stable (36 of 50 cases). Model choice drives cost and stability; the architecture drives accuracy.
 - **Visible output is larger, deliberately.** Verbatim quotes for every fact mean 511–522 visible tokens per case, against 151–234. That's the price of having Python check each fact against the chart instead of trusting the model. Caching more than pays for it.
 - **The cacheable prefix sits above OpenAI's 1,024-token minimum.** System instructions plus the strict schema come to about 2,100 tokens and are byte-identical on every request. All case-specific content, including the fallback flags, goes in the single user message after them. The starter's static prefix is below the minimum, so it caches little (4.0%) or nothing.
 
@@ -189,9 +195,9 @@ These checks are marked `affects_decision: false`, live outside `rule_checks`, a
 
 ## Testing
 
-`make test` runs 159 tests offline in about 2 seconds:
+`make test` runs 173 tests offline in about 2 seconds:
 - **Rule-by-rule unit tests**, including window boundaries, signature and procedure matching, brand/generic reconciliation, lab statuses, timezones, mixed °C/°F strings and the NPO informational check.
-- **Failure-mode tests:** invented, near-miss, stitched and wrong-document quotes; degree-sign corruption; fail-closed vitals.
+- **Failure-mode tests:** invented, near-miss, stitched and wrong-document quotes; degree-sign corruption; fail-closed vitals; procedure synonyms and wrong-side consents; the optional AI matcher staying informational.
 - **API-settings tests:** strict schema, `temperature=0`, `store=False`, a static cache prefix, the client's timeout and retries, and telemetry parsing.
 - **Replays of recorded real extractions** (`tests/fixtures/`, cases 16 and 25).
 - **Hypothesis property tests** (`tests/test_properties.py`), with cases built on arbitrary dates from 2000 to 2099:
@@ -215,6 +221,8 @@ A mutation check confirmed the suite catches eight deliberate bugs: each thresho
 | `reference.py` | drug, lab and title reference data; date/time, quote and procedure-matching helpers |
 | `schemas.py` | input, output and audit models |
 | `run_consistency.py` | multi-run consistency and telemetry report |
+| `WRITEUP.md` | approach and design write-up |
+| `ai_procedure_matcher.py` | optional, off by default: AI suggestion for procedure names that fail deterministic matching (informational only) |
 | `results/` | raw outputs, eval reports and usage for all four configurations (see `results/README.md`); `summarize_usage.py` rebuilds the cost table |
 | `tests/` | offline tests (`test_properties.py` holds the Hypothesis properties); `tests/fixtures/` holds recorded real extractions plus the script that records them |
 | `pyproject.toml`, `uv.lock` | runtime and dev dependencies |
@@ -222,9 +230,9 @@ A mutation check confirmed the suite catches eight deliberate bugs: each thresho
 ## Known limits
 
 - **Timezone:** same-day ordering of UTC structured vitals against note times needs `PREOP_FACILITY_TIMEZONE`. Without it the most severe reading is used.
-- **Procedure names:** consent matching is strict word matching, so synonyms ("hip replacement" vs "arthroplasty") go to follow-up instead of passing.
+- **Procedure names:** consent matching uses a small reviewed synonym table (CABG, TKA/THA, replacement ↔ arthroplasty, herniorrhaphy, …) and treats a left/right conflict as a mismatch. Synonyms outside the table fail closed into follow-up. The optional AI matcher (`ai_procedure_matcher.py`, off by default) can only *suggest* a match for the nurse.
 - **Locale:** dates are parsed as US `M/D/YYYY`, and the text patterns are English.
 - **Large charts:** one model call per case. A chart large enough to hit the output limit raises `ExtractionError` for manual review; there's no chunking.
 - **Model drift:** `gpt-5.6-luna` has no dated snapshot. The prompt-version hash in every audit, the recorded fixtures and `make consistency` are how drift would be detected.
 - **Runtime failures:** model refusals or truncated responses raise `ExtractionError` instead of producing a guessed decision.
-- **Not re-measured live:** the fail-closed vitals rule and the degree-sign normalisation (pipeline 2.1.0) are covered offline. They don't change any decision in the frozen `gpt-5.6-luna` outputs. The `gpt-4.1-mini` numbers above were measured with 2.0.0.
+- **Version of the `gpt-5.6-luna` results:** they were produced by pipeline 2.0.0 and kept frozen. The later changes (fail-closed vitals, degree-sign normalisation, pre-procedure filtering, synonyms and laterality) were checked to change no decision or issue in those 50 outputs; only summary wording and `pipeline_version` would differ. The `gpt-4.1-mini` pipeline results are from the current code (2.2.0).

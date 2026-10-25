@@ -33,6 +33,7 @@ from reference import (
     normalize_for_match,
     normalize_lab,
     parse_clock_time,
+    procedure_match_detail,
     parse_iso_date,
     load_timezone,
     to_facility_time,
@@ -292,6 +293,16 @@ class UnverifiedVital:
 
 
 @dataclass(frozen=True)
+class ProcedureSuggestion:
+    doc_id: str
+    scheduled: str
+    consented: str
+    same_procedure: bool
+    rationale: str
+    source: str  # e.g. "gpt-5.6-luna procedure matcher"
+
+
+@dataclass(frozen=True)
 class MedListEntry:
     source_id: str
     name: str
@@ -373,6 +384,7 @@ class CaseFacts:
     labs: list[LabRecord] = field(default_factory=list)
     vitals: list[VitalRecord] = field(default_factory=list)
     unverified_vitals: list[UnverifiedVital] = field(default_factory=list)
+    procedure_suggestions: list[ProcedureSuggestion] = field(default_factory=list)
     medication_list: list[MedListEntry] = field(default_factory=list)
     medication_mentions: list[MedicationMention] = field(default_factory=list)
     plans: list[PlanRecord] = field(default_factory=list)
@@ -1059,10 +1071,34 @@ def extract_case_facts(
     client: Any,
     facility_timezone: str | None = None,
     on_telemetry: Callable[[ExtractionTelemetry], None] | None = None,
+    procedure_matcher: Callable[[str, str], tuple[bool, str, str]] | None = None,
 ) -> CaseFacts:
     facts = preprocess(submission, model=model, facility_timezone=facility_timezone)
     extraction, _ = call_extractor(client, model=model, facts=facts, on_telemetry=on_telemetry)
-    return verify_extraction(extraction, facts)
+    facts = verify_extraction(extraction, facts)
+    if procedure_matcher is not None:
+        suggest_procedure_matches(facts, procedure_matcher)
+    return facts
+
+
+def suggest_procedure_matches(facts: CaseFacts, matcher: Callable[[str, str], tuple[bool, str, str]]) -> None:
+    # Only for signed consents whose procedure name failed deterministic matching. A matcher
+    # error is recorded as a warning and never fails the case: suggestions are optional context.
+    if not facts.procedure_type:
+        return
+    for consent in facts.consents:
+        if consent.status != "SIGNED_BY_PATIENT" or not consent.procedure_name:
+            continue
+        if procedure_match_detail(facts.procedure_type, consent.procedure_name)[0]:
+            continue
+        try:
+            same, rationale, source = matcher(facts.procedure_type, consent.procedure_name)
+        except Exception as exc:  # noqa: BLE001 - informational path must never break triage
+            facts.warnings.append(f"procedure matcher failed for {consent.doc_id}: {type(exc).__name__}")
+            continue
+        facts.procedure_suggestions.append(ProcedureSuggestion(
+            doc_id=consent.doc_id, scheduled=facts.procedure_type, consented=consent.procedure_name,
+            same_procedure=bool(same), rationale=rationale.strip(), source=source))
 
 
 __all__ = [
